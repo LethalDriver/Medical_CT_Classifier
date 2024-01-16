@@ -2,54 +2,102 @@ import os
 import shutil
 import random
 
+from tensorflow.keras.preprocessing import image_dataset_from_directory
+import matplotlib.pyplot as plt
+
+
+def load_images(images_dir,
+                batch_size=32,
+                image_size=(150, 150),
+                validation_split=0.2,
+                labels='inferred',
+                label_mode='categorical'):
+
+    is_test_dir = os.path.isdir(f'{images_dir}/test')
+
+    test_data = None
+
+    if is_test_dir:
+        test_data = image_dataset_from_directory(f'{images_dir}/test',
+                                                 image_size=(150, 150),
+                                                 batch_size=32,
+                                                 labels=labels,
+                                                 label_mode=label_mode)
+        train_dir = f'{images_dir}/train'
+    else:
+        train_dir = images_dir
+
+    train_data = image_dataset_from_directory(train_dir, image_size=image_size,
+                                              batch_size=batch_size,
+                                              validation_split=validation_split,
+                                              labels=labels,
+                                              label_mode=label_mode,
+                                              subset='training', seed=123)
+
+    validation_data = image_dataset_from_directory(train_dir, image_size=image_size,
+                                                   batch_size=batch_size,
+                                                   labels=labels,
+                                                   label_mode=label_mode,
+                                                   validation_split=validation_split,
+                                                   subset='validation', seed=123)
+
+    return (train_data, validation_data, test_data) if is_test_dir else (train_data, validation_data)
+
+
+def plot_history(history):
+    plt.figure(figsize=(12, 4))
+    plt.subplot(1, 2, 1)
+    plt.plot(history.history['accuracy'])
+    plt.plot(history.history['val_accuracy'])
+    plt.title('Model accuracy')
+    plt.ylabel('Accuracy')
+    plt.xlabel('Epoch')
+    plt.legend(['Train', 'Validation'], loc='upper left')
+
+    plt.subplot(1, 2, 2)
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('Model loss')
+    plt.ylabel('Loss')
+    plt.xlabel('Epoch')
+    plt.legend(['Train', 'Validation'], loc='upper left')
+
+    plt.tight_layout()
+    plt.show()
+
 
 def make_train_and_test_dirs(images_dir, test_split=0.2):
-    # Create a test directory if it doesn't exist
     test_dir = os.path.join(images_dir, 'test')
     os.makedirs(test_dir, exist_ok=True)
 
-    # Create a train directory if it doesn't exist
     train_dir = os.path.join(images_dir, 'train')
     os.makedirs(train_dir, exist_ok=True)
 
-    # Get the list of class directories
-    class_dirs = [d for d in os.listdir(images_dir) if os.path.isdir(os.path.join(images_dir, d)) and d not in ['test', 'train']]
+    class_dirs = [d for d in os.listdir(images_dir) if
+                  os.path.isdir(os.path.join(images_dir, d)) and d not in ['test', 'train']]
 
     for class_dir in class_dirs:
         print(f'Creating test set for {class_dir}...')
         class_dir_path = os.path.join(images_dir, class_dir)
 
-        # Get the list of image files for this class
         image_files = [f for f in os.listdir(class_dir_path) if os.path.isfile(os.path.join(class_dir_path, f))]
 
-        # Shuffle the list of image files
         random.shuffle(image_files)
 
-        # Calculate the number of test images
         num_test_images = int(len(image_files) * test_split)
 
-        # Select the test images
         test_images = image_files[:num_test_images]
 
-        # Select the train images
         train_images = image_files[num_test_images:]
 
-        # Create a test directory for this class
         test_class_dir = os.path.join(test_dir, class_dir)
         os.makedirs(test_class_dir, exist_ok=True)
 
-        # Create a train directory for this class
         train_class_dir = os.path.join(train_dir, class_dir)
         os.makedirs(train_class_dir, exist_ok=True)
 
-        # Move the test images to the test directory
         for test_image in test_images:
             shutil.move(os.path.join(class_dir_path, test_image), os.path.join(test_class_dir, test_image))
 
-        # Move the train images to the train directory
         for train_image in train_images:
             shutil.move(os.path.join(class_dir_path, train_image), os.path.join(train_class_dir, train_image))
-
-
-
-
