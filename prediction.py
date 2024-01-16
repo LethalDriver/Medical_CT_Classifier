@@ -6,7 +6,7 @@ import numpy as np
 model = load_model('kidney_diagnose.h5')
 
 # Load the image you want to make a prediction on
-img = image.load_img('CT-KIDNEY-DATASET-Normal-Cyst-Tumor-Stone/Tumor/Tumor- (32).jpg', target_size=(150, 150))
+img = image.load_img('CT-KIDNEY-DATASET-Normal-Cyst-Tumor-Stone/train/Tumor/Tumor- (32).jpg', target_size=(150, 150))
 
 # Convert the image to a numpy array
 img_array = image.img_to_array(img)
