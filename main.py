@@ -65,8 +65,6 @@ def plot_history(history):
     plt.tight_layout()
     plt.show()
 
-    VGG_model.save('kidney_diagnose.h5')
-
 
 train_data, validation_data = load_rescale_images()
 VGG_model = assemble_model()
@@ -78,3 +76,5 @@ history = VGG_model.fit(train_data, epochs=10,
                         validation_data=validation_data)
 
 plot_history(history)
+
+VGG_model.save('kidney_diagnose.h5')
