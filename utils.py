@@ -13,7 +13,6 @@ def load_images(images_dir,
                 validation_split=0.2,
                 labels='inferred',
                 label_mode='categorical'):
-
     is_test_dir = os.path.isdir(f'{images_dir}/test')
 
     test_data = None
@@ -21,7 +20,7 @@ def load_images(images_dir,
     if is_test_dir:
         test_data = image_dataset_from_directory(f'{images_dir}/test',
                                                  image_size=(150, 150),
-                                                 batch_size=32,
+                                                 batch_size=batch_size,
                                                  labels=labels,
                                                  label_mode=label_mode)
         train_dir = f'{images_dir}/train'
@@ -81,7 +80,8 @@ def make_train_and_test_dirs(images_dir, test_split=0.2):
         print(f'Creating test set for {class_dir}...')
         class_dir_path = os.path.join(images_dir, class_dir)
 
-        image_files = [f for f in os.listdir(class_dir_path) if os.path.isfile(os.path.join(class_dir_path, f))]
+        image_files = [f for f in os.listdir(class_dir_path)
+                       if os.path.isfile(os.path.join(class_dir_path, f))]
 
         random.shuffle(image_files)
 
@@ -103,6 +103,10 @@ def make_train_and_test_dirs(images_dir, test_split=0.2):
         for train_image in train_images:
             shutil.move(os.path.join(class_dir_path, train_image), os.path.join(train_class_dir, train_image))
 
+        os.rmdir(class_dir_path)
+
+    print('Successfully created test set.')
+
 
 def encode_image(image_path):
     image = open(image_path, 'rb')
@@ -110,3 +114,21 @@ def encode_image(image_path):
     image_b64 = base64.b64encode(image_bytes)
     image_str = image_b64.decode('utf-8')
     return image_str
+
+
+def delete_dcm_files(images_dir):
+    class_dirs = [d for d in os.listdir(images_dir) if
+                  os.path.isdir(os.path.join(images_dir, d)) and d not in ['test', 'train']]
+
+    for class_dir in class_dirs:
+        class_dir_path = os.path.join(images_dir, class_dir)
+        image_files = [f for f in os.listdir(class_dir_path)
+                       if os.path.isfile(os.path.join(class_dir_path, f))]
+
+        for image_file in image_files:
+            if image_file.endswith('.dcm'):
+                os.remove(os.path.join(class_dir_path, image_file))
+
+    print('Successfully deleted dcm files.')
+
+make_train_and_test_dirs('head_ct')

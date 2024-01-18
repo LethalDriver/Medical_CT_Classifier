@@ -18,8 +18,8 @@ def assemble_model(num_classes, first_dense_neurons, dropout=0.5, activation='so
 
 def augmentation_pipeline() -> Sequential:
     return Sequential([
-        RandomFlip("horizontal"),
+        RandomFlip(input_shape=(150, 150, 3)),
         RandomRotation(0.1),
-        RandomZoom(0.05),
+        RandomZoom(0.1),
         RandomContrast(0.05)
     ])
