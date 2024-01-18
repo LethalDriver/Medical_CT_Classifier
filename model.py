@@ -3,7 +3,7 @@ from tensorflow.keras.models import Sequential
 from keras.layers import RandomFlip, RandomRotation, RandomZoom, RandomContrast
 
 
-def assemble_model(num_classes, first_dense_neurons, dropout=0.5, activation='softmax'):
+def assemble_model(num_classes, first_dense_neurons, dropout=0.5, activation='softmax') -> Sequential:
 
     model = Sequential([
         Flatten(),
@@ -16,7 +16,7 @@ def assemble_model(num_classes, first_dense_neurons, dropout=0.5, activation='so
     return model
 
 
-def augmentation_pipeline():
+def augmentation_pipeline() -> Sequential:
     return Sequential([
         RandomFlip("horizontal"),
         RandomRotation(0.1),

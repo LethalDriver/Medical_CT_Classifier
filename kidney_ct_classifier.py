@@ -12,9 +12,9 @@ train_data, validation_data, test_data = load_images('CT-KIDNEY-DATASET-Normal-C
 input_shape = (150, 150, 3)
 
 pretrained_model = VGG16(include_top=False,
-                             input_shape=input_shape,
-                             pooling='max', classes=4,
-                             weights='imagenet')
+                         input_shape=input_shape,
+                         pooling='max', classes=4,
+                         weights='imagenet')
 
 pretrained_model.trainable = False
 
@@ -25,8 +25,6 @@ VGG_model = Sequential([
                    first_dense_neurons=512,
                    )
 ])
-
-
 
 VGG_model.compile(optimizer=Adam(0.0001),
                   loss=CategoricalCrossentropy(), metrics=["accuracy"])
