@@ -14,12 +14,13 @@ def load_images(images_dir,
                 labels='inferred',
                 label_mode='categorical'):
     is_test_dir = os.path.isdir(f'{images_dir}/test')
+    is_val_dir = os.path.isdir(f'{images_dir}/valid')
 
     test_data = None
 
     if is_test_dir:
         test_data = image_dataset_from_directory(f'{images_dir}/test',
-                                                 image_size=(150, 150),
+                                                 image_size=image_size,
                                                  batch_size=batch_size,
                                                  labels=labels,
                                                  label_mode=label_mode)
@@ -27,19 +28,31 @@ def load_images(images_dir,
     else:
         train_dir = images_dir
 
-    train_data = image_dataset_from_directory(train_dir, image_size=image_size,
-                                              batch_size=batch_size,
-                                              validation_split=validation_split,
-                                              labels=labels,
-                                              label_mode=label_mode,
-                                              subset='training', seed=123)
+    if is_val_dir:
+        validation_data = image_dataset_from_directory(f'{images_dir}/valid',
+                                                       image_size=image_size,
+                                                       batch_size=batch_size,
+                                                       labels=labels,
+                                                       label_mode=label_mode, seed=123)
 
-    validation_data = image_dataset_from_directory(train_dir, image_size=image_size,
-                                                   batch_size=batch_size,
-                                                   labels=labels,
-                                                   label_mode=label_mode,
-                                                   validation_split=validation_split,
-                                                   subset='validation', seed=123)
+        train_data = image_dataset_from_directory(train_dir, image_size=image_size,
+                                                  batch_size=batch_size,
+                                                  labels=labels,
+                                                  label_mode=label_mode,
+                                                  seed=123)
+    else:
+        train_data = image_dataset_from_directory(train_dir, image_size=image_size,
+                                                  batch_size=batch_size,
+                                                  validation_split=validation_split,
+                                                  labels=labels,
+                                                  label_mode=label_mode,
+                                                  subset='training', seed=123)
+        validation_data = image_dataset_from_directory(train_dir, image_size=image_size,
+                                                       batch_size=batch_size,
+                                                       labels=labels,
+                                                       label_mode=label_mode,
+                                                       validation_split=validation_split,
+                                                       subset='validation', seed=123)
 
     return (train_data, validation_data, test_data) if is_test_dir else (train_data, validation_data)
 
@@ -131,4 +144,4 @@ def delete_dcm_files(images_dir):
 
     print('Successfully deleted dcm files.')
 
-make_train_and_test_dirs('head_ct')
+
