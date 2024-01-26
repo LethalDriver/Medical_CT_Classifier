@@ -1,12 +1,20 @@
 import tkinter as tk
 from tkinter import filedialog, ttk
 from tkinter import PhotoImage
-from PIL import ImageTk, Image
+
+import requests
+from PIL import ImageTk
+from PIL import Image as PILImage
 import base64
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph
+from reportlab.platypus import Image as ReportLabImage
+from reportlab.lib.styles import getSampleStyleSheet
+import os
 
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 800
-ORGAN_CHOICES = ["Liver", "MAYBE OTHERS"]
+ORGAN_CHOICES = ["LIVER", "HEAD"]
 
 file_path = ""
 selected_organ = ""
@@ -26,8 +34,8 @@ def upload_image():
 
 
 def display_uploaded_image():
-    original_image = Image.open(file_path)
-    resized_image = original_image.resize((400, 400), Image.BICUBIC)
+    original_image = PILImage.open(file_path)
+    resized_image = original_image.resize((400, 400), PILImage.BICUBIC)
     img = ImageTk.PhotoImage(resized_image)
     image_label = tk.Label(window, background="#050505", image=img)
     image_label.image = img
@@ -41,28 +49,27 @@ def encode_image_to_base64(file_path):
 
 
 def send_analyze_request(file_path):
-    try:
-        encoded_image = encode_image_to_base64(file_path)
-        print("Encoded Image:", encoded_image)
-        # SIMULATE SENDING HTTP REQUEST
 
-        # SIMULATE RECEIVING THE RESPONSE
-        http_response = "Successfully received HTTP response"
+    encoded_image = encode_image_to_base64(file_path)
 
-        if "Successfully received HTTP response" in http_response:
-            show_diagnosis_window()
-    except Exception as e:
-        print(f"Error sending analyze request: {e}")
+    url = "https://lasting-honeybee-thankful.ngrok-free.app/upload_image"
 
+    payload = {"image": encoded_image}
 
-def get_analyze_result():
-    # GET THE PROBABILITY RESULTS FROM HTTPS
-    return 0.85  # placeholder
+    response = requests.post(url, json=payload)
+
+    parsed_response = response.json()
+
+    diagnosis = parsed_response["diagnosis"]
+
+    show_diagnosis_window()
+
+    return diagnosis
 
 
 def show_diagnosis_window():
     if file_path:
-        probability_result = get_analyze_result()
+        probability_result = send_analyze_request(file_path)
 
         diagnosis_window = tk.Toplevel()
         diagnosis_window.title("Diagnosis")
@@ -72,7 +79,7 @@ def show_diagnosis_window():
 
         diagnosis_label = tk.Label(
             diagnosis_window,
-            text=f"Diagnosis: Temporary text",
+            text=f"Diagnosis: ",
             font=("Calibri", 16),
             background="#BBBBBB"
         )
@@ -85,6 +92,8 @@ def show_diagnosis_window():
             background="#BBBBBB"
         )
         probability_label.pack(pady=20)
+
+        create_diagnosis_pdf(file_path, diagnosis_label.cget("text"), probability_result)
 
 
 def update_selected_organ(event):
@@ -106,6 +115,32 @@ def update_selected_organ(event):
         highlightthickness=2,
     )
     analysis_label.pack(padx=20, pady=5)
+
+
+def create_diagnosis_pdf(image_path, diagnosis, probability):
+    pdf_filename = "diagnosis_report.pdf"
+
+    doc = SimpleDocTemplate(pdf_filename, pagesize=letter)
+
+    styles = getSampleStyleSheet()
+
+    content = []
+
+    if os.path.exists(image_path):
+        img = ReportLabImage(image_path, width=400, height=400)
+        content.append(img)
+
+    diagnosis_text = f"Diagnosis: {diagnosis}"
+    probability_text = f"Probability: {probability:.2f}"
+
+    content.append(Paragraph(diagnosis_text, styles["Normal"]))
+    content.append(Paragraph(probability_text, styles["Normal"]))
+
+    doc.build(content)
+
+    print(f"PDF report generated: {pdf_filename}")
+
+    return pdf_filename
 
 
 window = tk.Tk()
