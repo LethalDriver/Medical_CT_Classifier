@@ -25,7 +25,7 @@ async def upload_image(data: ImageData):
     prediction = get_prediction(image)
     diagnosis, confidence = parse_prediction(prediction)
     response = Prediction(diagnosis=diagnosis, confidence=confidence)
-    return {"prediction": response}
+    return response
 
 
 if __name__ == '__main__':
