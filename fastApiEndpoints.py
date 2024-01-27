@@ -28,6 +28,7 @@ async def upload_image(data: ImageData):
     return response
 
 
+
 if __name__ == '__main__':
     import uvicorn
 
