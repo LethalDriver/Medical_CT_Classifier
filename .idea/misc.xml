@@ -3,5 +3,9 @@
   <component name="Black">
     <option name="sdkName" value="global" />
   </component>
+<<<<<<< HEAD
   <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.10.12 WSL (Ubuntu): (/usr/bin/python3)" project-jdk-type="Python SDK" />
+=======
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.9" project-jdk-type="Python SDK" />
+>>>>>>> e6988442dd8d1da6a6fcd26f7da522bc5f46cb50
 </project>

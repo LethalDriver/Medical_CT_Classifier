@@ -16,17 +16,6 @@ def load_images(images_dir,
     is_test_dir = os.path.isdir(f'{images_dir}/test')
     is_val_dir = os.path.isdir(f'{images_dir}/valid')
 
-    test_data = None
-
-    if is_test_dir:
-        test_data = image_dataset_from_directory(f'{images_dir}/test',
-                                                 image_size=image_size,
-                                                 batch_size=batch_size,
-                                                 labels=labels,
-                                                 label_mode=label_mode)
-        train_dir = f'{images_dir}/train'
-    else:
-        train_dir = images_dir
 
     if is_val_dir:
         validation_data = image_dataset_from_directory(f'{images_dir}/valid',
@@ -143,5 +132,4 @@ def delete_dcm_files(images_dir):
                 os.remove(os.path.join(class_dir_path, image_file))
 
     print('Successfully deleted dcm files.')
-
 
