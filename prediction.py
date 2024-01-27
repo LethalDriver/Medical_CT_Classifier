@@ -7,10 +7,8 @@ from tensorflow.keras.preprocessing.image import img_to_array
 
 
 def preprocess_prediction_image(image: Image) -> np.ndarray:
-    image = image.convert('RGB')
     image = image.resize((150, 150))
     img_array = img_to_array(image)
-    img_array /= 255
     img_array = np.expand_dims(img_array, axis=0)
     return img_array
 

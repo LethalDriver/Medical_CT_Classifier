@@ -5,12 +5,12 @@ from tkinter import PhotoImage
 import requests
 from PIL import ImageTk
 from PIL import Image as PILImage
-import base64
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.platypus import Image as ReportLabImage
 from reportlab.lib.styles import getSampleStyleSheet
 import os
+from utils import encode_image
 
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 800
@@ -42,34 +42,27 @@ def display_uploaded_image():
     image_label.pack(padx=50, pady=50)
 
 
-def encode_image_to_base64(file_path):
-    with open(file_path, "rb") as image:
-        encoded_image = base64.b64encode(image.read())
-    return encoded_image.decode('utf-8')
-
-
 def send_analyze_request(file_path):
+    encoded_image = encode_image(file_path)
 
-    encoded_image = encode_image_to_base64(file_path)
-
-    url = "https://lasting-honeybee-thankful.ngrok-free.app/upload_image"
+    url = "http://localhost:8000/upload_image"
 
     payload = {"image": encoded_image}
 
     response = requests.post(url, json=payload)
 
-    parsed_response = response.json()
+    print("Server response:", response.text)  # Add this line to print the server response
 
-    diagnosis = parsed_response["diagnosis"]
-
-    show_diagnosis_window()
+    diagnosis = response.json()
 
     return diagnosis
 
 
 def show_diagnosis_window():
     if file_path:
-        probability_result = send_analyze_request(file_path)
+        result = send_analyze_request(file_path)
+        diagnosis = result["diagnosis"]
+        confidence = result["confidence"]
 
         diagnosis_window = tk.Toplevel()
         diagnosis_window.title("Diagnosis")
@@ -79,7 +72,7 @@ def show_diagnosis_window():
 
         diagnosis_label = tk.Label(
             diagnosis_window,
-            text=f"Diagnosis: ",
+            text=f"Diagnosis: {diagnosis}",
             font=("Calibri", 16),
             background="#BBBBBB"
         )
@@ -87,13 +80,13 @@ def show_diagnosis_window():
 
         probability_label = tk.Label(
             diagnosis_window,
-            text=f"Probability: {probability_result:.2f}",
+            text=f"Probability: {confidence:.2f}",
             font=("Calibri", 16),
             background="#BBBBBB"
         )
         probability_label.pack(pady=20)
 
-        create_diagnosis_pdf(file_path, diagnosis_label.cget("text"), probability_result)
+        create_diagnosis_pdf(file_path, diagnosis, confidence)
 
 
 def update_selected_organ(event):
@@ -196,7 +189,7 @@ btn_analyze_img = tk.Button(
     state=tk.DISABLED,
     compound='bottom',
     bd=5,
-    command=lambda: send_analyze_request(file_path)
+    command=show_diagnosis_window
 )
 btn_analyze_img.place(relx=0.5, rely=0.9, anchor="center")
 

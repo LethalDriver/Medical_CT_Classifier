@@ -118,18 +118,4 @@ def encode_image(image_path):
     return image_str
 
 
-def delete_dcm_files(images_dir):
-    class_dirs = [d for d in os.listdir(images_dir) if
-                  os.path.isdir(os.path.join(images_dir, d)) and d not in ['test', 'train']]
-
-    for class_dir in class_dirs:
-        class_dir_path = os.path.join(images_dir, class_dir)
-        image_files = [f for f in os.listdir(class_dir_path)
-                       if os.path.isfile(os.path.join(class_dir_path, f))]
-
-        for image_file in image_files:
-            if image_file.endswith('.dcm'):
-                os.remove(os.path.join(class_dir_path, image_file))
-
-    print('Successfully deleted dcm files.')
 
