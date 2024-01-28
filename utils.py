@@ -2,7 +2,7 @@ import base64
 import os
 import shutil
 import random
-
+import numpy as np
 from tensorflow.keras.preprocessing import image_dataset_from_directory
 import matplotlib.pyplot as plt
 

@@ -1,4 +1,3 @@
-import numpy as np
 from keras.callbacks import EarlyStopping
 from keras import Sequential
 from keras.src.callbacks import LearningRateScheduler
