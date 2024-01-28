@@ -15,6 +15,35 @@ def load_images(images_dir,
                 validation_split=0.2,
                 labels='inferred',
                 label_mode='categorical'):
+    """Function that loads images from a directory and returns train, validation and test tf datasets,
+    if test directory exists, otherwise returns only train and validation tf datasets.
+
+    Parameters
+    ----------
+    images_dir: str
+        Path to directory containing images.
+    batch_size: int
+        Returned datasets' batch sizes.
+    image_size: tuple of int
+        Returned datasets' image sizes.
+    validation_split:
+        Fraction of images reserved for validation.
+    labels: str
+        Labels mode: 'inferred', None or list of labels corresponding to the directories found in the images_dir,
+        refer to Keras documentation for more details.
+    label_mode: str
+        Labels mode: 'categorical', 'binary', 'sparse', 'int', refer to Keras documentation for more details.
+
+    Returns
+    -------
+    train_data: tf.data.Dataset
+        Train dataset.
+    validation_data: tf.data.Dataset
+        Validation dataset.
+    test_data: tf.data.Dataset or None
+        Test dataset, if test directory exists, otherwise None.
+    """
+
     is_test_dir = os.path.isdir(f'{images_dir}/test')
     is_val_dir = os.path.isdir(f'{images_dir}/valid')
 
@@ -60,6 +89,18 @@ def load_images(images_dir,
 
 
 def plot_history(history):
+    """Function that plots model's training and validation accuracy and loss.
+
+    Parameters
+    ----------
+    history: keras.callbacks.History
+        Model's history.
+
+    Returns
+    -------
+    None
+    """
+
     plt.figure(figsize=(12, 4))
     plt.subplot(1, 2, 1)
     plt.plot(history.history['accuracy'])
@@ -82,6 +123,20 @@ def plot_history(history):
 
 
 def make_train_and_test_dirs(images_dir, test_split=0.2):
+    """Utility function for creating train and test directories from a directory containing images.
+
+    Parameters
+    ----------
+    images_dir: str
+        Path to directory containing images.
+    test_split: float
+        Fraction of images reserved for test set.
+
+    Returns
+    -------
+    None
+    """
+
     test_dir = os.path.join(images_dir, 'test')
     os.makedirs(test_dir, exist_ok=True)
 
@@ -124,6 +179,18 @@ def make_train_and_test_dirs(images_dir, test_split=0.2):
 
 
 def encode_image(image_path):
+    """Utility function previously used for testing API endpoints with http client, currently not used.
+
+    Parameters
+    ----------
+    image_path:
+        Path of the image to be encoded.
+
+    Returns
+    -------
+    image_str: str
+        Base64 encoded image.
+    """
     image = open(image_path, 'rb')
     image_bytes = image.read()
     image_b64 = base64.b64encode(image_bytes)
@@ -132,12 +199,36 @@ def encode_image(image_path):
 
 
 def decode_image(image_str):
+    """Function for decoding base64 encoded images.
+
+    Parameters
+    ----------
+    image_str:
+        Base64 encoded image.
+
+    Returns
+    -------
+    image: PIL.Image
+        Decoded image.
+    """
     image_bytes = base64.b64decode(image_str)
     image = Image.open(io.BytesIO(image_bytes))
     return image
 
 
 def step_decay(epoch):
+    """Step decay function for learning rate scheduling in chest_ct_classifier.py.
+
+    Parameters
+    ----------
+    epoch:
+        Number of the current epoch.
+
+    Returns
+    -------
+    lrate: float
+        Learning rate to be applied to the model.
+    """
     initial_lrate = 0.001
     drop = 0.5
     epochs_drop = 15

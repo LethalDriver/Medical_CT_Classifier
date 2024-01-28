@@ -18,6 +18,18 @@ app = FastAPI()
 
 @app.post("/kidney")
 async def get_kidney_diagnosis(data: ImageData):
+    """Fast API endpoint for kidney diagnosis.
+
+    Parameters
+    ----------
+    data: ImageData
+        Image data, encoded in base64.
+
+    Returns
+    -------
+    response: Prediction
+        Prediction response containing diagnosis and confidence.
+    """
     image = decode_image(data.image)
     diagnosis, confidence = prediction_pipeline(image, "kidney_diagnose")
     response = Prediction(diagnosis=diagnosis, confidence=confidence)
@@ -26,6 +38,18 @@ async def get_kidney_diagnosis(data: ImageData):
 
 @app.post("/chest")
 async def get_chest_diagnosis(data: ImageData):
+    """Fast API endpoint for chest diagnosis.
+
+        Parameters
+        ----------
+        data: ImageData
+            Image data, encoded in base64.
+
+        Returns
+        -------
+        response: Prediction
+            Prediction response containing diagnosis and confidence.
+        """
     image = decode_image(data.image)
     diagnosis, confidence = prediction_pipeline(image, "chest_diagnose")
     response = Prediction(diagnosis=diagnosis, confidence=confidence)
