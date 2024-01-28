@@ -10,6 +10,7 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, HRFlowable
 from reportlab.platypus import Image as ReportLabImage
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 import os
+import sys
 from utils import encode_image
 
 WINDOW_WIDTH = 800
@@ -19,6 +20,17 @@ ORGAN_CHOICES = ["Kidney", "Chest"]
 file_path = ""
 selected_organ = ""
 image_label = None
+
+
+def restart_program():
+    """
+    Restart the program
+
+    """
+    global file_path
+    file_path = ""
+    python = sys.executable
+    os.execl(python, python, *sys.argv)
 
 
 def upload_image():
@@ -39,8 +51,9 @@ def upload_image():
 
 
 def display_uploaded_image():
-    """ Display uploaded image in the window and
-        delete the previous image if it exists
+    """
+    Display uploaded image in the window and
+    delete the previous image if it exists
 
     """
     global image_label
@@ -64,6 +77,8 @@ def send_analyze_request(file_path, selected_organ):
     ----------
     file_path : str
         Path to the image file
+    selected_organ : str
+        Organ selected for analysis
 
     Returns
     -------
@@ -109,9 +124,9 @@ def show_diagnosis_window():
 
         diagnosis_label = tk.Label(
             window,
-            text=f"Diagnosis: {diagnosis}\nProbability: {confidence*100: .2f}%",
+            text=f"Diagnosis: {diagnosis}\nProbability: {confidence * 100: .2f}%",
             font=("Calibri", 20),
-            background="#F0F0F0",
+            fg="black",
             height=3,
             width=25,
             bd=2,
@@ -120,7 +135,7 @@ def show_diagnosis_window():
         diagnosis_label.config(state=tk.DISABLED)
         diagnosis_label.pack(pady=20)
 
-        generate_pdf_button = tk.Button(
+        btn_generate_pdf = tk.Button(
             window,
             text="Generate PDF",
             command=lambda: create_diagnosis_pdf(file_path, diagnosis, confidence),
@@ -132,9 +147,29 @@ def show_diagnosis_window():
             bd=5,
             padx=10,
             pady=5,
-            compound='bottom'
+            compound='bottom',
+            width=15,
+            height=2
         )
-        generate_pdf_button.pack(pady=10)
+        btn_generate_pdf.pack(pady=10)
+
+        btn_back = tk.Button(
+            window,
+            text="Back",
+            command=restart_program,
+            font=("Calibri", 20),
+            bg="black",
+            fg="white",
+            activeforeground="white",
+            activebackground='black',
+            bd=5,
+            padx=10,
+            pady=5,
+            compound='bottom',
+            width=15,
+            height=2
+        )
+        btn_back.pack(pady=10)
 
 
 def update_selected_organ(event):
@@ -149,6 +184,8 @@ def update_selected_organ(event):
     """
     global selected_organ
     selected_organ = organ_combobox.get()
+
+    organ_combobox.set(selected_organ)
 
     analysis_label.config(text=f"{selected_organ} Tomography Analysis")
 
@@ -195,16 +232,28 @@ def create_diagnosis_pdf(image_path, diagnosis, confidence):
     title = f"<b>{selected_organ} Diagnosis Report</b>"
     content.append(Paragraph(title, styles['Title']))
 
-    content.append(HRFlowable(width="100%", thickness=2, color="black", spaceBefore=5, spaceAfter=5))
+    content.append(HRFlowable(
+        width="100%",
+        thickness=2,
+        color="black",
+        spaceBefore=5,
+        spaceAfter=5
+    ))
 
     if os.path.exists(image_path):
         img = ReportLabImage(image_path, width=400, height=400)
         content.append(img)
 
-    content.append(HRFlowable(width="100%", thickness=2, color="black", spaceBefore=5, spaceAfter=5))
+    content.append(HRFlowable(
+        width="100%",
+        thickness=2,
+        color="black",
+        spaceBefore=5,
+        spaceAfter=5
+    ))
 
     diagnosis_text = f"<b>Diagnosis:</b> {diagnosis}"
-    probability_text = f"<b>Probability:</b> {confidence}"
+    probability_text = f"<b>Probability:</b> {round(confidence * 100, 2)}%"
     content.append(Paragraph(diagnosis_text, custom_style))
     content.append(Paragraph(probability_text, custom_style))
 
@@ -230,7 +279,7 @@ background_image = background_image.subsample(
 background_label = tk.Label(window, image=background_image)
 background_label.place(x=0, y=0, relwidth=1, relheight=1)
 
-# combobox for choosing the organ
+# Combobox for choosing the organ
 selected_organ = tk.StringVar()
 selected_organ.set("[Select Organ]")
 
@@ -247,7 +296,7 @@ organ_combobox = ttk.Combobox(
 organ_combobox.pack(pady=10)
 organ_combobox.bind("<<ComboboxSelected>>", update_selected_organ)
 
-# button for uploading image
+# Button for uploading image
 btn_upload_img = tk.Button(
     window,
     text="UPLOAD IMAGE",
@@ -263,7 +312,7 @@ btn_upload_img = tk.Button(
 )
 btn_upload_img.place(relx=0.5, rely=0.75, anchor="center")
 
-# button for analyzing image
+# Button for analyzing image
 btn_analyze_img = tk.Button(
     window,
     text="ANALYZE IMAGE",
