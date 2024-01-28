@@ -1,10 +1,9 @@
 from keras import Sequential
 from keras.optimizers import Adam
 from keras.losses import CategoricalCrossentropy
-from keras.src.callbacks import EarlyStopping
 from keras.src.layers import Rescaling
 from utils import load_images, plot_history
-from model import assemble_chest_classifier, assemble_kidney_classifier
+from model import assemble_kidney_classifier
 from keras.applications.vgg16 import VGG16
 
 train_data, validation_data, test_data = load_images('CT-KIDNEY-DATASET-Normal-Cyst-Tumor-Stone')
