@@ -1,9 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-import base64
-from io import BytesIO
-from PIL import Image
-from prediction import get_prediction, parse_prediction
+from prediction import prediction_pipeline
+from utils import decode_image
 
 
 class ImageData(BaseModel):
@@ -18,15 +16,20 @@ class Prediction(BaseModel):
 app = FastAPI()
 
 
-@app.post("/upload_image")
-async def upload_image(data: ImageData):
-    base64_img_bytes = base64.b64decode(data.image)
-    image = Image.open(BytesIO(base64_img_bytes))
-    prediction = get_prediction(image)
-    diagnosis, confidence = parse_prediction(prediction)
+@app.post("/kidney")
+async def get_kidney_diagnosis(data: ImageData):
+    image = decode_image(data.image)
+    diagnosis, confidence = prediction_pipeline(image, "kidney_diagnose")
     response = Prediction(diagnosis=diagnosis, confidence=confidence)
     return response
 
+
+@app.post("/chest")
+async def get_chest_diagnosis(data: ImageData):
+    image = decode_image(data.image)
+    diagnosis, confidence = prediction_pipeline(image, "chest_diagnose")
+    response = Prediction(diagnosis=diagnosis, confidence=confidence)
+    return response
 
 
 if __name__ == '__main__':

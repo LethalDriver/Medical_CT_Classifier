@@ -1,8 +1,10 @@
 import base64
+import io
 import os
 import shutil
 import random
 import numpy as np
+from PIL import Image
 from tensorflow.keras.preprocessing import image_dataset_from_directory
 import matplotlib.pyplot as plt
 
@@ -13,7 +15,6 @@ def load_images(images_dir,
                 validation_split=0.2,
                 labels='inferred',
                 label_mode='categorical'):
-
     is_test_dir = os.path.isdir(f'{images_dir}/test')
     is_val_dir = os.path.isdir(f'{images_dir}/valid')
 
@@ -128,6 +129,12 @@ def encode_image(image_path):
     image_b64 = base64.b64encode(image_bytes)
     image_str = image_b64.decode('utf-8')
     return image_str
+
+
+def decode_image(image_str):
+    image_bytes = base64.b64decode(image_str)
+    image = Image.open(io.BytesIO(image_bytes))
+    return image
 
 
 def step_decay(epoch):
