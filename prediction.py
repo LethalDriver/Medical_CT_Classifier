@@ -17,6 +17,7 @@ def preprocess_prediction_image(image: Image) -> np.ndarray:
     img_array: np.ndarray
         Preprocessed image, in the format expected by the model (1, 150, 150, 3).
     """
+    image = image.convert('RGB')
     image = image.resize((150, 150))
     img_array = img_to_array(image)
     img_array = np.expand_dims(img_array, axis=0)
