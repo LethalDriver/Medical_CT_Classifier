@@ -2,20 +2,11 @@ import numpy as np
 from keras.callbacks import EarlyStopping
 from keras import Sequential
 from keras.src.callbacks import LearningRateScheduler
-from keras.src.layers import Rescaling
+from keras.src.layers import Rescaling, RandomZoom
 from keras.src.optimizers import Adam
 from tensorflow.keras.applications.vgg16 import VGG16
-from utils import load_images
-from model import assemble_classifier, augmentation_pipeline
-from utils import plot_history
-
-
-def step_decay(epoch):
-    initial_lrate = 0.001
-    drop = 0.5
-    epochs_drop = 15
-    lrate = initial_lrate * np.power(drop, np.floor((1 + epoch) / epochs_drop))
-    return lrate
+from model import assemble_chest_classifier
+from utils import plot_history, step_decay, load_images
 
 
 early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
@@ -32,17 +23,17 @@ pretrained_model.trainable = False
 
 model = Sequential([
     Rescaling(1. / 255, input_shape=input_shape),
-    augmentation_pipeline(),
+    RandomZoom(0.1)
 ])
 
-lrate = LearningRateScheduler(step_decay)
+learning_rate_scheduling = LearningRateScheduler(step_decay)
 
 model.add(pretrained_model)
-model = assemble_classifier(model, num_classes=4, first_dense_neurons=512)
+model = assemble_chest_classifier(model, num_classes=4, first_dense_neurons=512)
 model.compile(optimizer=Adam(learning_rate=0.001), loss='categorical_crossentropy', metrics=['accuracy'])
 
 model.summary()
-history = model.fit(train_data, epochs=60, validation_data=validation_data, callbacks=[lrate])
+history = model.fit(train_data, epochs=60, validation_data=validation_data, callbacks=[learning_rate_scheduling])
 
 plot_history(history)
 

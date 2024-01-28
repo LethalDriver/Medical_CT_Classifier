@@ -4,12 +4,10 @@ from keras.losses import CategoricalCrossentropy
 from keras.src.callbacks import EarlyStopping
 from keras.src.layers import Rescaling
 from utils import load_images, plot_history
-from model import assemble_classifier, assemble_kidney_classifier
+from model import assemble_chest_classifier, assemble_kidney_classifier
 from keras.applications.vgg16 import VGG16
 
 train_data, validation_data, test_data = load_images('CT-KIDNEY-DATASET-Normal-Cyst-Tumor-Stone')
-early_stopping = EarlyStopping(monitor='val_loss', patience=3, restore_best_weights=True)
-
 
 input_shape = (150, 150, 3)
 
@@ -22,7 +20,6 @@ pretrained_model.trainable = False
 
 VGG_model = Sequential([
     Rescaling(1. / 255, input_shape=(150, 150, 3)),
-
     pretrained_model
 ])
 
@@ -31,6 +28,7 @@ VGG_model = assemble_kidney_classifier(VGG_model, num_classes=4, first_dense_neu
 VGG_model.compile(optimizer=Adam(0.0001),
                   loss=CategoricalCrossentropy(), metrics=["accuracy"])
 
+VGG_model.summary()
 history = VGG_model.fit(train_data, epochs=15,
                         validation_data=validation_data)
 

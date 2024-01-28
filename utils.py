@@ -13,9 +13,21 @@ def load_images(images_dir,
                 validation_split=0.2,
                 labels='inferred',
                 label_mode='categorical'):
+
     is_test_dir = os.path.isdir(f'{images_dir}/test')
     is_val_dir = os.path.isdir(f'{images_dir}/valid')
 
+    test_data = None
+
+    if is_test_dir:
+        test_data = image_dataset_from_directory(f'{images_dir}/test',
+                                                 image_size=image_size,
+                                                 batch_size=batch_size,
+                                                 labels=labels,
+                                                 label_mode=label_mode)
+        train_dir = f'{images_dir}/train'
+    else:
+        train_dir = images_dir
 
     if is_val_dir:
         validation_data = image_dataset_from_directory(f'{images_dir}/valid',
@@ -118,4 +130,9 @@ def encode_image(image_path):
     return image_str
 
 
-
+def step_decay(epoch):
+    initial_lrate = 0.001
+    drop = 0.5
+    epochs_drop = 15
+    lrate = initial_lrate * np.power(drop, np.floor((1 + epoch) / epochs_drop))
+    return lrate
