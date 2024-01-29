@@ -3,5 +3,5 @@
   <component name="Black">
     <option name="sdkName" value="Python 3.11 (KidneyDiagnosis)" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11 (KidneyDiagnosis)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11 (Medical_CT_Classifier)" project-jdk-type="Python SDK" />
 </project>

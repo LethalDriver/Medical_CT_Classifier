@@ -63,7 +63,6 @@ def upload_image():
     )
 
     if file_path:
-        print(f"Selected {selected_organ} Image:", file_path)
         display_uploaded_image()
         btn_analyze_img.config(state=tk.ACTIVE)
 
@@ -105,8 +104,6 @@ def send_analyze_request(file_path, selected_organ):
     """
     encoded_image = encode_image(file_path)
 
-    print(selected_organ)
-
     url = "http://localhost:8000"
 
     if selected_organ == "Kidney":
@@ -117,8 +114,6 @@ def send_analyze_request(file_path, selected_organ):
     payload = {"image": encoded_image}
 
     response = requests.post(url, json=payload)
-
-    print("Server response:", response.text)
 
     diagnosis = response.json()
 
