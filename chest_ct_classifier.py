@@ -45,8 +45,8 @@ print(f'Test loss: {test_loss}, Test accuracy: {test_accuracy}')
 model.save('chest_diagnose.h5')
 
 """
-Epoch 60/60 20/20 [==============================] - 3s 110ms/step - loss: 0.1393 - accuracy: 0.9543 - val_loss: 
-0.4936 - val_accuracy: 0.9028 - lr: 6.2500e-05 
-10/10 [==============================] - 6s 554ms/step - loss: 0.6753 
-- accuracy: 0.7778 Test loss: 0.6753209829330444, Test accuracy: 0.7777777910232544
+Epoch 60/60 20/20 [==============================] - 3s 110ms/step - loss: 0.1393 - accuracy: 0.9543 
+- val_loss: 0.4936 - val_accuracy: 0.9028 - lr: 6.2500e-05 
+10/10 [==============================] - 6s 554ms/step - loss: 0.6753 - accuracy: 0.7778
+Test loss: 0.6753209829330444, Test accuracy: 0.7777777910232544
 """

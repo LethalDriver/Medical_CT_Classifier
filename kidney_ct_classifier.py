@@ -1,3 +1,6 @@
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+
 from keras import Sequential
 from keras.optimizers import Adam
 from keras.losses import CategoricalCrossentropy
@@ -37,3 +40,11 @@ plot_history(history)
 print(f'Test loss: {test_loss}, Test accuracy: {test_accuracy}')
 
 VGG_model.save('kidney_diagnose.h5')
+
+"""
+Epoch 15/15
+249/249 [==============================] - 29s 116ms/step - loss: 0.0708 - accuracy: 0.9828 
+- val_loss: 0.0274 - val_accuracy: 0.9965
+78/78 [==============================] - 15s 175ms/step - loss: 0.0323 - accuracy: 0.9940
+Test loss: 0.032348066568374634, Test accuracy: 0.993968665599823
+"""
