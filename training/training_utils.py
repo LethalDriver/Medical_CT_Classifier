@@ -178,42 +178,7 @@ def make_train_and_test_dirs(images_dir, test_split=0.2):
     print('Successfully created test set.')
 
 
-def encode_image(image_path):
-    """Utility function previously used for testing API endpoints with http client, currently not used.
 
-    Parameters
-    ----------
-    image_path:
-        Path of the image to be encoded.
-
-    Returns
-    -------
-    image_str: str
-        Base64 encoded image.
-    """
-    image = open(image_path, 'rb')
-    image_bytes = image.read()
-    image_b64 = base64.b64encode(image_bytes)
-    image_str = image_b64.decode('utf-8')
-    return image_str
-
-
-def decode_image(image_str):
-    """Function for decoding base64 encoded images.
-
-    Parameters
-    ----------
-    image_str:
-        Base64 encoded image.
-
-    Returns
-    -------
-    image: PIL.Image
-        Decoded image.
-    """
-    image_bytes = base64.b64decode(image_str)
-    image = Image.open(io.BytesIO(image_bytes))
-    return image
 
 
 def step_decay(epoch):

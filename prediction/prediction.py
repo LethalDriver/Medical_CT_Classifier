@@ -1,7 +1,28 @@
+import base64
+import io
+
 from tensorflow.keras.models import load_model
 import numpy as np
 from PIL import Image
 from tensorflow.keras.preprocessing.image import img_to_array
+
+
+def decode_image(image_str):
+    """Function for decoding base64 encoded images.
+
+    Parameters
+    ----------
+    image_str:
+        Base64 encoded image.
+
+    Returns
+    -------
+    image: PIL.Image
+        Decoded image.
+    """
+    image_bytes = base64.b64decode(image_str)
+    image = Image.open(io.BytesIO(image_bytes))
+    return image
 
 
 def preprocess_prediction_image(image: Image) -> np.ndarray:
@@ -73,13 +94,13 @@ def parse_prediction(prediction: np.ndarray, model_name: str) -> tuple[str, floa
     return classes[model_name][np.argmax(prediction)], float(np.max(prediction))
 
 
-def prediction_pipeline(image: Image, model_name: str) -> tuple[str, float]:
+def prediction_pipeline(image_data: str, model_name: str) -> tuple[str, float]:
     """Function that applies entire prediction pipeline to a given image.
 
     Parameters
     ----------
-    image: PIL.Image
-        Image to make a prediction on.
+    image_data: str
+        Base64 encoded image.
     model_name: str
         Name of the model used to make a prediction, currently supported models are: 'kidney_diagnose', 'chest_diagnose'.
 
@@ -93,6 +114,7 @@ def prediction_pipeline(image: Image, model_name: str) -> tuple[str, float]:
     confidence: float
         Confidence of the diagnosis.
     """
+    image = decode_image(image_data)
     prediction = get_prediction(image, model_name)
     diagnosis, confidence = parse_prediction(prediction, model_name)
     return diagnosis, confidence

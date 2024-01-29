@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Black">
-    <option name="sdkName" value="global" />
+    <option name="sdkName" value="Python 3.11 (KidneyDiagnosis)" />
   </component>
-<<<<<<< HEAD
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.10.12 WSL (Ubuntu): (/usr/bin/python3)" project-jdk-type="Python SDK" />
-=======
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.9" project-jdk-type="Python SDK" />
->>>>>>> e6988442dd8d1da6a6fcd26f7da522bc5f46cb50
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.11 (KidneyDiagnosis)" project-jdk-type="Python SDK" />
 </project>

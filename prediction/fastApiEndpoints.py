@@ -1,7 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from prediction import prediction_pipeline
-from utils import decode_image
 
 
 class ImageData(BaseModel):
@@ -30,8 +29,7 @@ async def get_kidney_diagnosis(data: ImageData):
     response: Prediction
         Prediction response containing diagnosis and confidence.
     """
-    image = decode_image(data.image)
-    diagnosis, confidence = prediction_pipeline(image, "kidney_diagnose")
+    diagnosis, confidence = prediction_pipeline(data.image, "kidney_diagnose")
     response = Prediction(diagnosis=diagnosis, confidence=confidence)
     return response
 
@@ -50,8 +48,7 @@ async def get_chest_diagnosis(data: ImageData):
         response: Prediction
             Prediction response containing diagnosis and confidence.
         """
-    image = decode_image(data.image)
-    diagnosis, confidence = prediction_pipeline(image, "chest_diagnose")
+    diagnosis, confidence = prediction_pipeline(data.image, "chest_diagnose")
     response = Prediction(diagnosis=diagnosis, confidence=confidence)
     return response
 

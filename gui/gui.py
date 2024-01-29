@@ -1,3 +1,4 @@
+import base64
 import os
 import sys
 import requests
@@ -11,11 +12,8 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, HRFlowable, Image a
 import tkinter as tk
 from tkinter import filedialog, ttk, PhotoImage
 
-from utils import encode_image
-
-
 WINDOW_WIDTH = 800
-WINDOW_HEIGHT = 800
+WINDOW_HEIGHT = 700
 ORGAN_CHOICES = ["Kidney", "Chest"]
 
 file_path = ""
@@ -31,6 +29,26 @@ def restart_program():
     window.withdraw()
     python = sys.executable
     subprocess.Popen([python] + sys.argv)
+
+
+def encode_image(image_path):
+    """Function for encoding images to base64.
+
+    Parameters
+    ----------
+    image_path:
+        Path of the image to be encoded.
+
+    Returns
+    -------
+    image_str: str
+        Base64 encoded image.
+    """
+    image = open(image_path, 'rb')
+    image_bytes = image.read()
+    image_b64 = base64.b64encode(image_bytes)
+    image_str = image_b64.decode('utf-8')
+    return image_str
 
 
 def upload_image():
@@ -61,7 +79,7 @@ def display_uploaded_image():
         image_label.destroy()
 
     original_image = PILImage.open(file_path)
-    resized_image = original_image.resize((400, 400), PILImage.BICUBIC)
+    resized_image = original_image.resize((300, 300), PILImage.BICUBIC)
     img = ImageTk.PhotoImage(resized_image)
     image_label = tk.Label(window, background="#050505", image=img)
     image_label.image = img
@@ -131,7 +149,7 @@ def show_diagnosis_window():
             font=("Calibri", 20),
             fg="black",
             height=3,
-            width=25,
+            width=30,
             bd=2,
             relief="solid"
         )
@@ -347,7 +365,7 @@ btn_analyze_img = tk.Button(
     bd=5,
     command=show_diagnosis_window
 )
-btn_analyze_img.place(relx=0.5, rely=0.9, anchor="center")
+btn_analyze_img.place(relx=0.5, rely=0.90, anchor="center")
 
 # Label displaying chosen organ
 analysis_label = tk.Label(
