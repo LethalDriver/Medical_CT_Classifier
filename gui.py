@@ -232,9 +232,7 @@ def create_diagnosis_pdf(image_path, diagnosis, confidence):
         Name of the PDF file
 
     """
-    resources_folder = "resources"
-
-    pdf_filename = os.path.join(resources_folder, f"{selected_organ.lower()}_diagnosis_report.pdf")
+    pdf_filename = f"{selected_organ.lower()}_diagnosis_report.pdf"
 
     if os.path.exists(pdf_filename):
         os.remove(pdf_filename)
@@ -294,7 +292,7 @@ window.title("Organ Diagnosis UI")
 window.resizable(False, False)
 
 # Set an image as background of window
-background_image = PhotoImage(file=os.path.join("resources", "bg_gui.png"))
+background_image = PhotoImage(file="bg_gui.png")
 background_image = background_image.subsample(
     int(background_image.width() / WINDOW_WIDTH),
     int(background_image.height() / WINDOW_HEIGHT)
