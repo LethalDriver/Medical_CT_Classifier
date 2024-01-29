@@ -1,0 +1,11 @@
+fastapi==0.109.0
+keras==2.15.0
+matplotlib==3.8.2
+numpy==1.26.3
+Pillow==10.2.0
+pydantic==2.6.0
+reportlab==4.0.9
+Requests==2.31.0
+tensorflow==2.15.0
+tensorflow_intel==2.15.0
+uvicorn==0.27.0.post1
