@@ -1,17 +1,18 @@
-import tkinter as tk
-from tkinter import filedialog, ttk
-from tkinter import PhotoImage
-
+import os
+import sys
 import requests
+import subprocess
+
 from PIL import ImageTk
 from PIL import Image as PILImage
 from reportlab.lib.pagesizes import letter
-from reportlab.platypus import SimpleDocTemplate, Paragraph, HRFlowable
-from reportlab.platypus import Image as ReportLabImage
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-import os
-import sys
+from reportlab.platypus import SimpleDocTemplate, Paragraph, HRFlowable, Image as ReportLabImage
+import tkinter as tk
+from tkinter import filedialog, ttk, PhotoImage
+
 from utils import encode_image
+
 
 WINDOW_WIDTH = 800
 WINDOW_HEIGHT = 800
@@ -27,10 +28,9 @@ def restart_program():
     Restart the program
 
     """
-    global file_path
-    file_path = ""
+    window.withdraw()
     python = sys.executable
-    os.execl(python, python, *sys.argv)
+    subprocess.Popen([python] + sys.argv)
 
 
 def upload_image():
@@ -109,10 +109,13 @@ def send_analyze_request(file_path, selected_organ):
 
 def show_diagnosis_window():
     """
-    Display diagnosis window with the diagnosis and confidence
+    Display diagnosis with the diagnosis and confidence, also
+    display buttons for generating a PDF report, going back to
+    the menu and exiting the program.
 
     """
     global file_path
+
     if file_path:
         for widget in window.winfo_children():
             if widget != background_label:
@@ -137,7 +140,7 @@ def show_diagnosis_window():
 
         btn_generate_pdf = tk.Button(
             window,
-            text="Generate PDF",
+            text="GENERATE PDF \U0001F4C4",
             command=lambda: create_diagnosis_pdf(file_path, diagnosis, confidence),
             font=("Calibri", 20),
             bg="black",
@@ -155,7 +158,7 @@ def show_diagnosis_window():
 
         btn_back = tk.Button(
             window,
-            text="Back",
+            text="BACK TO MENU \U0001F519",
             command=restart_program,
             font=("Calibri", 20),
             bg="black",
@@ -170,6 +173,24 @@ def show_diagnosis_window():
             height=2
         )
         btn_back.pack(pady=10)
+
+        btn_exit = tk.Button(
+            window,
+            text="EXIT \U0001F6AA",
+            command=window.quit,
+            font=("Calibri", 15),
+            bg="black",
+            fg="white",
+            activeforeground="white",
+            activebackground='black',
+            bd=5,
+            padx=10,
+            pady=5,
+            compound='bottom',
+            width=15,
+            height=2
+        )
+        btn_exit.pack(side=tk.BOTTOM, pady=10)
 
 
 def update_selected_organ(event):
@@ -299,7 +320,7 @@ organ_combobox.bind("<<ComboboxSelected>>", update_selected_organ)
 # Button for uploading image
 btn_upload_img = tk.Button(
     window,
-    text="UPLOAD IMAGE",
+    text="UPLOAD IMAGE \U0001F4E4",
     command=upload_image,
     font=("Calibri", 20),
     fg="white",
@@ -315,7 +336,7 @@ btn_upload_img.place(relx=0.5, rely=0.75, anchor="center")
 # Button for analyzing image
 btn_analyze_img = tk.Button(
     window,
-    text="ANALYZE IMAGE",
+    text="ANALYZE IMAGE \U0001F50D",
     font=("Calibri", 20),
     fg="white",
     bg="black",
